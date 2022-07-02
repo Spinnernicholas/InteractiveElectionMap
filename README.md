@@ -1,2 +1,2 @@
-# interactive-election-map
+# InteractiveElectionMap
 Interactive Election Results Map
