@@ -3,6 +3,8 @@ L.Control.ElectionSelector = L.Control.extend({
         position: 'bottomleft',
     },
     initialize: function (layer, contests, options) {
+        this.selection = {};
+
         this._layer = layer;
         this._contests = contests;
         this._colorScale = chroma.scale(['white', '08306b']);

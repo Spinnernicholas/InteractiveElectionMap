@@ -74,6 +74,12 @@ let precinctsLayer;
                 click: e => {
                     let contest = data.contests[selector.selection.contest];
                     let choice = data.contests[selector.selection.contest].choices[selector.selection.choice];
+                    //let flayer = precinctsLayer.getLayer(e.target._leaflet_id);
+                    //e.target.options.color = "#FFFFFF";
+                    e.target.setStyle({
+                        weight: 2,
+                        color: "#FFFFFF"
+                    }).bringToFront();
                     L.popup()
                         .setLatLng(e.latlng)
                         .setContent(`
@@ -81,8 +87,11 @@ let precinctsLayer;
                         ${choice.label}
                         </p>
                         Votes: ${choice.votes[e.target.feature.properties.PrecinctID]} (${(100 * choice.percentage[e.target.feature.properties.PrecinctID]).toFixed(2)}%)<br/>
-                        <p class="popup-details closed"></p>
                         `)
+                        .on({remove: () => e.target.setStyle({
+                            weight: 1,
+                            color: "#AAAAAA"
+                        })})
                         .openOn(map);
                 }
             });
