@@ -19,4 +19,4 @@ Built with [Leafletjs](https://leafletjs.com/)
 
 BaseMap provided by [OpenStreetMap](https://www.openstreetmap.org/)
 
-Special thanks the [Contra Costa County Elections Division](https://www.cocovote.us/)
+Special thanks to the [Contra Costa County Elections Division](https://www.cocovote.us/)
