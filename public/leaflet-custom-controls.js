@@ -6,9 +6,11 @@ L.Control.ElectionSelector = L.Control.extend({
         this._layer = layer;
         this._contests = contests;
         this._colors = ['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b'];
+        this._colorScale = chroma.scale(['white', '08306b']);
     },
     onAdd: function(map) {
-        let div = L.DomUtil.create('div', 'election-selector leaflet-bar');
+        let div = this._container = L.DomUtil.create('div', 'election-selector leaflet-bar');
+        this._addCredits();
         this._contestSelector = L.DomUtil.create('select', 'election-selector-select', div);
         this._choiceSelector = L.DomUtil.create('select', 'election-selector-select', div);
 
@@ -27,6 +29,17 @@ L.Control.ElectionSelector = L.Control.extend({
 
     onRemove: function(map) {
         // Nothing to do here
+    },
+
+    _addCredits: function(){
+        let div = L.DomUtil.create('div', 'election-selector-credits', this._container);
+
+        div.innerHTML = `
+        <p>
+            <b>Contra Costa County Primary Election 2022 Interactive Map</b><br/>
+            <i>*precinct map data may be incorrect. Working on getting correct data.</i><br/>
+            Created by <a href="https://github.com/Spinnernicholas" target="_blank">Nick Spinner</a>
+        </p>`;
     },
 
     _addContests: function(contests) {
@@ -69,10 +82,11 @@ L.Control.ElectionSelector = L.Control.extend({
                 colorIndex: Math.floor(ch.percentage[feature.properties.PrecinctID] * colors.length)
             }));
             return {
-                fillColor:colors[Math.floor(fdata[selection.choice].percentage * (colors.length - 1))],
+                fillColor: this._colorScale(fdata[selection.choice].percentage),
                 fillOpacity: 1,
                 fill: fdata[selection.choice].percentage !== undefined,
                 stroke: fdata[selection.choice].percentage !== undefined,
+                weight: 1,
                 color: "#AAAAAA"
             }
         };
