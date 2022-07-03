@@ -69,29 +69,25 @@ let precinctsLayer;
     })
 
     precinctsLayer = L.geoJSON(data.precincts, {
-        // style: (feature) => {
-        //     let fdata = data.contests[selection.contest].choices.map(ch => ({
-        //         label: ch.label,
-        //         votes: ch.votes[feature.properties.PrecinctID],
-        //         percentage: ch.percentage[feature.properties.PrecinctID],
-        //         colorIndex: Math.floor(ch.percentage[feature.properties.PrecinctID] * colors.length)
-        //     }));
-        //     return {
-        //         fillColor:colors[Math.floor(fdata[selection.choice].percentage * (colors.length - 1))],
-        //         fillOpacity: 1,
-        //         fill: fdata[selection.choice].percentage !== undefined,
-        //         stroke: fdata[selection.choice].percentage !== undefined,
-        //         color: "#AAAAAA"
-        //     };
-        // },
         onEachFeature: (feature, layer) => {
             layer.on({
                 click: e => {
-                    console.log(e.target.feature.properties.PrecinctID);
+                    let contest = data.contests[selector.selection.contest];
+                    let choice = data.contests[selector.selection.contest].choices[selector.selection.choice];
+                    L.popup()
+                        .setLatLng(e.latlng)
+                        .setContent(`
+                        <p class="popup-title">${e.target.feature.properties.PrecinctID}<br/>
+                        ${choice.label}
+                        </p>
+                        Votes: ${choice.votes[e.target.feature.properties.PrecinctID]} (${(100 * choice.percentage[e.target.feature.properties.PrecinctID]).toFixed(2)}%)<br/>
+                        <p class="popup-details closed"></p>
+                        `)
+                        .openOn(map);
                 }
             });
         }
     }).addTo(map);
     
-    L.control.ElectionSelector(precinctsLayer, data.contests).addTo(map);
+    let selector = L.control.ElectionSelector(precinctsLayer, data.contests).addTo(map);
 })();

@@ -5,12 +5,11 @@ L.Control.ElectionSelector = L.Control.extend({
     initialize: function (layer, contests, options) {
         this._layer = layer;
         this._contests = contests;
-        this._colors = ['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b'];
         this._colorScale = chroma.scale(['white', '08306b']);
     },
     onAdd: function(map) {
         let div = this._container = L.DomUtil.create('div', 'election-selector leaflet-bar');
-        this._addCredits();
+        this._addTitle();
         this._contestSelector = L.DomUtil.create('select', 'election-selector-select', div);
         this._choiceSelector = L.DomUtil.create('select', 'election-selector-select', div);
 
@@ -31,10 +30,11 @@ L.Control.ElectionSelector = L.Control.extend({
         // Nothing to do here
     },
 
-    _addCredits: function(){
+    _addTitle: function(){
         let div = L.DomUtil.create('div', 'election-selector-credits', this._container);
 
         div.innerHTML = `
+        <p><b>=</b></p>
         <p>
             <b>Contra Costa County Primary Election 2022 Interactive Map</b><br/>
             <i>*precinct map data may be incorrect. Working on getting correct data.</i><br/>
@@ -69,7 +69,7 @@ L.Control.ElectionSelector = L.Control.extend({
     },
 
     _createStyle: function() {
-        let selection = {
+        let selection = this.selection = {
             contest: this._contestSelector.value,
             choice: this._choiceSelector.value
         };
@@ -78,8 +78,7 @@ L.Control.ElectionSelector = L.Control.extend({
             let fdata = this._contests[selection.contest].choices.map(ch => ({
                 label: ch.label,
                 votes: ch.votes[feature.properties.PrecinctID],
-                percentage: ch.percentage[feature.properties.PrecinctID],
-                colorIndex: Math.floor(ch.percentage[feature.properties.PrecinctID] * colors.length)
+                percentage: ch.percentage[feature.properties.PrecinctID]
             }));
             return {
                 fillColor: this._colorScale(fdata[selection.choice].percentage),

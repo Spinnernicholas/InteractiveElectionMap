@@ -26,3 +26,9 @@
   display: inline;
   text-decoration: underline;
 }
+
+p.popup-title{
+  margin: 5px 0;
+  font-weight: bold;
+  text-align: center;
+}
