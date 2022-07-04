@@ -5,6 +5,22 @@
   width: 100%;
 }
 
+.election-selector {
+  background-color: white;
+}
+
+.election-selector.closed {
+  background-image: url(leaflet/images/layers.png);
+	width: 36px;
+	height: 36px;
+  background-position: 50% 50%;
+	background-repeat: no-repeat;
+}
+
+.election-selector.closed .election-selector-drawer{
+  display: none;
+}
+
 .election-selector-select {
   width: 100%;
   padding: 12px 20px;
@@ -13,12 +29,11 @@
   box-sizing: border-box;
 }
 
-.election-selector-credits {
+.election-selector-credits{
   width: 100%;
   display: block;
   border: 1px solid #ccc;
   box-sizing: border-box;
-  background-color: white;
   text-align: center;
 }
 
