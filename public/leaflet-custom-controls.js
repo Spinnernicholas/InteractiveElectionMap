@@ -9,6 +9,7 @@ L.Control.ElectionSelector = L.Control.extend({
         this._layer = layer;
         this._contests = contests;
         this._colorScale = chroma.scale(['white', '08306b']);
+        this._colorClassifier = ['#1f78b4','#e31a1c','#33a02c','#ff7f00','#6a3d9a','#ffff99','#b15928','#a6cee3','#fb9a99','#b2df8a','#fdbf6f','#cab2d6'];
     },
     onAdd: function(map) {
         let container = this._container = L.DomUtil.create('div', 'election-selector leaflet-bar');
@@ -69,6 +70,9 @@ L.Control.ElectionSelector = L.Control.extend({
     },
 
     _addChoices: function(choices) {
+        let option = L.DomUtil.create('option', 'election-selector-option', this._choiceSelector);
+        option.value = "w"
+        option.textContent = "WINNER BY PRECINCT";
         choices.forEach((ch, i) => {
             let option = L.DomUtil.create('option', 'election-selector-option', this._choiceSelector);
             option.value = i;
@@ -91,8 +95,7 @@ L.Control.ElectionSelector = L.Control.extend({
             contest: this._contestSelector.value,
             choice: this._choiceSelector.value
         };
-        let colors = this._colors;
-        return feature => {    
+        if(selection.choice !== "w") return feature => {
             let fdata = this._contests[selection.contest].choices.map(ch => ({
                 label: ch.label,
                 votes: ch.votes[feature.properties.PrecinctID],
@@ -100,11 +103,16 @@ L.Control.ElectionSelector = L.Control.extend({
             }));
             return {
                 fillColor: this._colorScale(fdata[selection.choice].percentage),
-                fillOpacity: 1,
                 fill: fdata[selection.choice].percentage !== undefined,
-                stroke: fdata[selection.choice].percentage !== undefined,
-                weight: 1,
-                color: "#AAAAAA"
+                stroke: fdata[selection.choice].percentage !== undefined
+            }
+        };
+        return feature => {
+            let fdata = this._contests[selection.contest].results[feature.properties.PrecinctID];
+            return {
+                fillColor: fdata !== undefined && fdata.total !== 0 ? this._colorClassifier[fdata.winner.id] : 'white',
+                fill: fdata !== undefined,
+                stroke: fdata !== undefined
             }
         };
     },

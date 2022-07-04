@@ -47,7 +47,10 @@ let precinctsLayer;
         let results = {};
 
         c.P.forEach((p, i) => {
-            results[p] = c.V[i];
+            results[p.substring(0, 7)] = {
+                votes: c.V[i],
+                total: c.V[i].reduce((sum, x) => sum + x, 0)
+            }
         });
 
         data.contests[c.K].results = results;
@@ -59,34 +62,61 @@ let precinctsLayer;
             ch.percentage = {};
 
             Object.entries(c.results).map(([p, r]) => {
-
-                ch.votes[p.substring(0, 7)] = r[i];
-                ch.percentage[p.substring(0, 7)] = r[i] === 0? 0 : r[i]/r.reduce((sum, x) => sum + x, 0);
+                ch.votes[p.substring(0, 7)] = r.votes[i];
+                ch.percentage[p.substring(0, 7)] = r.votes[i] === 0? 0 : r.votes[i]/r.total;
+                let max = r.votes[0];
+                let maxIndex = 0;
+                for(j = 1; j < r.votes.length; j++) if(r.votes[j] > max) {
+                    max = r.votes[j];
+                    maxIndex = j;
+                }
+                r.winner = {
+                    id: maxIndex,
+                    label: r.total > 0 ? c.choices[maxIndex].label : "No Votes",
+                    votes: max
+                };
             });
         })
-
-        delete c.results;
     })
 
     precinctsLayer = L.geoJSON(data.precincts, {
+        style: feature => {
+            return {
+                fillOpacity: 1,
+                weight: 1,
+                color: "#AAAAAA"
+            }
+        },
         onEachFeature: (feature, layer) => {
             layer.on({
                 click: e => {
                     let contest = data.contests[selector.selection.contest];
                     let choice = data.contests[selector.selection.contest].choices[selector.selection.choice];
-                    //let flayer = precinctsLayer.getLayer(e.target._leaflet_id);
-                    //e.target.options.color = "#FFFFFF";
+                    let winner = data.contests[selector.selection.contest].results[e.target.feature.properties.PrecinctID].winner;
                     e.target.setStyle({
                         weight: 2,
                         color: "#FFFFFF"
                     }).bringToFront();
-                    L.popup()
+                    if(selector.selection.choice === 'w') L.popup()
+                        .setLatLng(e.latlng)
+                        .setContent(`
+                        <p class="popup-title">${e.target.feature.properties.PrecinctID}<br/>
+                        ${winner.label}
+                        </p>
+                        Votes: ${winner.votes}/${contest.results[e.target.feature.properties.PrecinctID].total} (${contest.results[e.target.feature.properties.PrecinctID].total !== 0 ? (100 * winner.votes/contest.results[e.target.feature.properties.PrecinctID].total).toFixed(2) : 0}%)<br/>
+                        `)
+                        .on({remove: () => e.target.setStyle({
+                            weight: 1,
+                            color: "#AAAAAA"
+                        })})
+                        .openOn(map);
+                    else L.popup()
                         .setLatLng(e.latlng)
                         .setContent(`
                         <p class="popup-title">${e.target.feature.properties.PrecinctID}<br/>
                         ${choice.label}
                         </p>
-                        Votes: ${choice.votes[e.target.feature.properties.PrecinctID]} (${(100 * choice.percentage[e.target.feature.properties.PrecinctID]).toFixed(2)}%)<br/>
+                        Votes: ${choice.votes[e.target.feature.properties.PrecinctID]}/${contest.results[e.target.feature.properties.PrecinctID].total} (${(100 * choice.percentage[e.target.feature.properties.PrecinctID]).toFixed(2)}%)<br/>
                         `)
                         .on({remove: () => e.target.setStyle({
                             weight: 1,
