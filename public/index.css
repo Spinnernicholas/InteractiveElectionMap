@@ -29,7 +29,7 @@
   box-sizing: border-box;
 }
 
-.election-selector-credits{
+.election-selector div{
   width: 100%;
   display: block;
   border: 1px solid #ccc;
@@ -40,6 +40,11 @@
 .election-selector-credits a {
   display: inline;
   text-decoration: underline;
+}
+
+.election-selector-slider{
+  width: 90%;
+  margin: 3px 5%;
 }
 
 p.popup-title{

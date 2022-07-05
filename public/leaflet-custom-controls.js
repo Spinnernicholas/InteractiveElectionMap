@@ -5,6 +5,7 @@ L.Control.ElectionSelector = L.Control.extend({
     initialize: function (layer, contests, options) {
         this.selection = {};
 
+        this._opacity = 100;
         this._closed = false;
         this._layer = layer;
         this._contests = contests;
@@ -16,6 +17,7 @@ L.Control.ElectionSelector = L.Control.extend({
 
         let drawer = this._drawer = L.DomUtil.create('div', 'election-selector-drawer leaflet-bar', container);
         this._addTitle();
+        this._addControls();
         this._contestSelector = L.DomUtil.create('select', 'election-selector-select', drawer);
         this._choiceSelector = L.DomUtil.create('select', 'election-selector-select', drawer);
 
@@ -61,6 +63,23 @@ L.Control.ElectionSelector = L.Control.extend({
         </p>`;
     },
 
+    _addControls: function(){
+        let controls = L.DomUtil.create('div', 'election-selector-controls', this._drawer);
+
+        controls.innerHTML = '<p>Opacity:</p>';
+
+        let slider = L.DomUtil.create('input', 'election-selector-slider', controls);
+        slider.type = "range";
+        slider.min = 0;
+        slider.max = 100;
+        slider.value = this._opacity;
+
+        L.DomEvent.on(slider, 'input', (e) => {
+            this._opacity = e.target.value;
+            this._layer.setStyle(this._createStyle());
+        }, this);
+    },
+
     _addContests: function(contests) {
         contests.forEach((c) => {
             let option = L.DomUtil.create('option', 'election-selector-option', this._contestSelector);
@@ -85,7 +104,7 @@ L.Control.ElectionSelector = L.Control.extend({
         this._addChoices(this._contests[this._contestSelector.value].choices);
         this._layer.setStyle(this._createStyle());
     },
-    
+
     _choiceChanged: function() {
         this._layer.setStyle(this._createStyle());
     },
@@ -103,16 +122,14 @@ L.Control.ElectionSelector = L.Control.extend({
             }));
             return {
                 fillColor: this._colorScale(fdata[selection.choice].percentage),
-                fill: fdata[selection.choice].percentage !== undefined,
-                stroke: fdata[selection.choice].percentage !== undefined
+                fillOpacity: fdata[selection.choice].percentage !== undefined ? this._opacity/100 : 0
             }
         };
         return feature => {
             let fdata = this._contests[selection.contest].results[feature.properties.PrecinctID];
             return {
                 fillColor: fdata !== undefined && fdata.total !== 0 ? this._colorClassifier[fdata.winner.id] : 'white',
-                fill: fdata !== undefined,
-                stroke: fdata !== undefined
+                fillOpacity: fdata !== undefined ? this._opacity/100 : 0
             }
         };
     },

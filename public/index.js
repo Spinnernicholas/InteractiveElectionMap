@@ -92,31 +92,45 @@ let precinctsLayer;
                 click: e => {
                     let contest = data.contests[selector.selection.contest];
                     let choice = data.contests[selector.selection.contest].choices[selector.selection.choice];
-                    let winner = data.contests[selector.selection.contest].results[e.target.feature.properties.PrecinctID].winner;
+                    let results = data.contests[selector.selection.contest].results[e.target.feature.properties.PrecinctID];
+                    let winner = results !== undefined ? results.winner : undefined;
                     e.target.setStyle({
                         weight: 2,
                         color: "#FFFFFF"
                     }).bringToFront();
-                    if(selector.selection.choice === 'w') L.popup()
-                        .setLatLng(e.latlng)
-                        .setContent(`
-                        <p class="popup-title">${e.target.feature.properties.PrecinctID}<br/>
-                        ${winner.label}
-                        </p>
-                        Votes: ${winner.votes}/${contest.results[e.target.feature.properties.PrecinctID].total} (${contest.results[e.target.feature.properties.PrecinctID].total !== 0 ? (100 * winner.votes/contest.results[e.target.feature.properties.PrecinctID].total).toFixed(2) : 0}%)<br/>
-                        `)
-                        .on({remove: () => e.target.setStyle({
-                            weight: 1,
-                            color: "#AAAAAA"
-                        })})
-                        .openOn(map);
+                    if(results !== undefined) {
+                        if(selector.selection.choice === 'w') L.popup()
+                            .setLatLng(e.latlng)
+                            .setContent(`
+                            <p class="popup-title">${e.target.feature.properties.PrecinctID}<br/>
+                            ${winner.label}
+                            </p>
+                            Votes: ${winner.votes}/${contest.results[e.target.feature.properties.PrecinctID].total} (${contest.results[e.target.feature.properties.PrecinctID].total !== 0 ? (100 * winner.votes/contest.results[e.target.feature.properties.PrecinctID].total).toFixed(2) : 0}%)<br/>
+                            `)
+                            .on({remove: () => e.target.setStyle({
+                                weight: 1,
+                                color: "#AAAAAA"
+                            })})
+                            .openOn(map);
+                        else L.popup()
+                            .setLatLng(e.latlng)
+                            .setContent(`
+                            <p class="popup-title">${e.target.feature.properties.PrecinctID}<br/>
+                            ${choice.label}
+                            </p>
+                            Votes: ${choice.votes[e.target.feature.properties.PrecinctID]}/${contest.results[e.target.feature.properties.PrecinctID].total} (${(100 * choice.percentage[e.target.feature.properties.PrecinctID]).toFixed(2)}%)<br/>
+                            `)
+                            .on({remove: () => e.target.setStyle({
+                                weight: 1,
+                                color: "#AAAAAA"
+                            })})
+                            .openOn(map);
+                    }
                     else L.popup()
                         .setLatLng(e.latlng)
                         .setContent(`
-                        <p class="popup-title">${e.target.feature.properties.PrecinctID}<br/>
-                        ${choice.label}
-                        </p>
-                        Votes: ${choice.votes[e.target.feature.properties.PrecinctID]}/${contest.results[e.target.feature.properties.PrecinctID].total} (${(100 * choice.percentage[e.target.feature.properties.PrecinctID]).toFixed(2)}%)<br/>
+                        <p class="popup-title">${e.target.feature.properties.PrecinctID}<br/></p>
+                        No Election Results
                         `)
                         .on({remove: () => e.target.setStyle({
                             weight: 1,
