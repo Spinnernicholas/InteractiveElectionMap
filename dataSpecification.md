@@ -67,17 +67,17 @@ objects in contest.results
             "results": {
                 "HELLAS001" : {
                     "total": 425,
-                    "stats": [298, 127],
+                    "votes": [298, 127],
                     "winner": 0
                 },
                 "UTOPIA001" : {
                     "total": 383,
-                    "stats": [177, 206],
+                    "votes": [177, 206],
                     "winner": 1
                 },
                 "ARGYRE001" : {
                     "total": 341,
-                    "stats": [238, 103],
+                    "votes": [238, 103],
                     "winner": 0
                 }
             }
