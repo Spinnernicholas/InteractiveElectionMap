@@ -2,6 +2,8 @@
 
 This readme describes the election data specification.
 
+*This is a target specification and has not been implemented
+
 # Definitions
 
 - Contest: Single election race
