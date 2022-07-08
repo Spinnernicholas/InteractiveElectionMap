@@ -102,12 +102,14 @@ L.Control.ElectionSelector = L.Control.extend({
     },
 
     _contestChanged: function() {
+        this._layer._map.closePopup();
         L.DomUtil.empty(this._choiceSelector);
         this._addChoices(this._contests[this._contestSelector.value].choices);
         this._layer.setStyle(this._createStyle());
     },
 
     _choiceChanged: function() {
+        this._layer._map.closePopup();
         this._layer.setStyle(this._createStyle());
     },
 
