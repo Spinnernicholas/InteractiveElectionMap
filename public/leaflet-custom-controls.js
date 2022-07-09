@@ -41,7 +41,7 @@ L.Control.ElectionSelector = L.Control.extend({
                 });
             },
             mouseleave: function (e) {
-                if(container.contains(e.target)) e.stopPropagation();
+                if(e.relatedTarget === null || container.contains(e.relatedTarget)) e.stopPropagation();
                 else this._close();
             }
         }, this);
