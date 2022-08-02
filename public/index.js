@@ -9,77 +9,10 @@ let data = {};
 let precinctsLayer;
 
 (async () => {
-    let response = await fetch("data/sum.json")
-    let sum = await response.json();
-    data.sum_json = sum;
+    data = await loadData();
+    let precincts = await loadJson("data/precincts.gis.json");
 
-    response = await fetch("data/details.json")
-    let details = await response.json();
-    data.details_json = details;
-
-    response = await fetch("data/precincts.gis.json")
-    data.precincts = await response.json();
-
-    data.contests = {};
-    
-    sum.Contests.forEach(c => {
-
-        let contest = {
-        id: c.K,
-        label: c.C,
-        choices: [],
-        results: []
-        }
-
-        //Add Choices
-        c.CH.forEach((ch, i) => {
-            contest.choices.push({
-                label: ch,
-                party: c.P[i],
-                votes: c.V[i]
-            });
-        });
-
-        data.contests[c.K] = contest;
-    });
-
-    details.Contests.forEach(c => {
-        let results = {};
-
-        c.P.forEach((p, i) => {
-            results[p.substring(0, 7)] = {
-                votes: c.V[i],
-                total: c.V[i].reduce((sum, x) => sum + x, 0)
-            }
-        });
-
-        data.contests[c.K].results = results;
-    });
-
-    Object.entries(data.contests).forEach(([id, c]) => {
-        c.choices.forEach((ch, i) => {
-            ch.votes = {};
-            ch.percentage = {};
-
-            Object.entries(c.results).map(([p, r]) => {
-                ch.votes[p.substring(0, 7)] = r.votes[i];
-                ch.percentage[p.substring(0, 7)] = r.votes[i] === 0? 0 : r.votes[i]/r.total;
-                let max = r.votes[0];
-                let maxIndex = 0;
-                for(j = 1; j < r.votes.length; j++) if(r.votes[j] > max) {
-                    max = r.votes[j];
-                    maxIndex = j;
-                }
-                r.winner = {
-                    id: maxIndex,
-                    label: r.total > 0 ? c.choices[maxIndex].label : "No Votes",
-                    votes: max
-                };
-            });
-        })
-    })
-
-    precinctsLayer = L.geoJSON(data.precincts, {
+    precinctsLayer = L.geoJSON(precincts, {
         style: feature => {
             return {
                 fillOpacity: 1,
@@ -144,3 +77,81 @@ let precinctsLayer;
     
     let selector = L.control.ElectionSelector(precinctsLayer, data.contests).addTo(map);
 })();
+
+async function loadData(){
+    let data = {};
+
+    let sum = await loadJson("data/sum.json");
+    let details = await loadJson("data/details.json");
+
+    data.contests = {};
+    
+    sum.Contests.forEach(c => {
+
+        let contest = {
+        id: c.K,
+        label: c.C,
+        choices: [],
+        results: []
+        }
+
+        //Add Choices
+        c.CH.forEach((ch, i) => {
+            contest.choices.push({
+                label: ch,
+                party: c.P[i],
+                votes: c.V[i]
+            });
+        });
+
+        data.contests[c.K] = contest;
+    });
+
+    details.Contests.forEach(c => {
+        let results = {};
+
+        c.P.forEach((p, i) => {
+            results[p.substring(0, 7)] = {
+                votes: c.V[i],
+                total: c.V[i].reduce((sum, x) => sum + x, 0)
+            }
+        });
+
+        data.contests[c.K].results = results;
+    });
+
+    Object.entries(data.contests).forEach(([id, c]) => {
+        c.choices.forEach((ch, i) => {
+            ch.votes = {};
+            ch.percentage = {};
+
+            Object.entries(c.results).map(([p, r]) => {
+                ch.votes[p.substring(0, 7)] = r.votes[i];
+                ch.percentage[p.substring(0, 7)] = r.votes[i] === 0? 0 : r.votes[i]/r.total;
+                let max = r.votes[0];
+                let maxIndex = 0;
+                for(j = 1; j < r.votes.length; j++) if(r.votes[j] > max) {
+                    max = r.votes[j];
+                    maxIndex = j;
+                }
+                r.winner = {
+                    id: maxIndex,
+                    label: r.total > 0 ? c.choices[maxIndex].label : "No Votes",
+                    votes: max
+                };
+            });
+        })
+    });
+
+    return data;
+}
+
+function formatData(dataIn) {
+    let dataOut = {};
+    return dataOut;
+}
+
+async function loadJson(file) {
+    let response = await fetch(file);
+    return await response.json();
+}
