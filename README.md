@@ -3,8 +3,6 @@ This is an interactive map for the [Contra Costa County](https://www.contracosta
 
 Try it out [Here](https://spinnernicholas.github.io/InteractiveElectionMap/public/index.html)
 
-**Please Note: Precinct GIS data is incorrect**
-
 # Todo:
 #### For Users
 - [ ] Get correct preciinct GIS data
