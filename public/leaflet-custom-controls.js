@@ -60,8 +60,9 @@ L.Control.ElectionSelector = L.Control.extend({
 
         div.innerHTML = `
         <p>
-            <b>Contra Costa County Primary Election 2022 Interactive Map</b><br/>
+            <b>Contra Costa County General Election 2022 Interactive Map</b><br/>
             Created by <a href="https://github.com/Spinnernicholas" target="_blank">Nick Spinner</a>
+            Support this Project <a href="https://www.paypal.com/donate/?hosted_button_id=8TFKEHNMHW93N">Donate</a>
         </p>`;
     },
 
