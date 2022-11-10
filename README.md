@@ -16,6 +16,7 @@ Please consider supporting this project with a donation. 100% of the proceeds wi
 #### Current Funds
 Current Funds           | $23.79
 :---------------------- | -------:
+Revenue/Expenditures    | Amount
 Donations               | $25.00
 Payment Processing Fees | -$1.21
 
