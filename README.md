@@ -14,6 +14,7 @@ Please consider supporting this project with a donation. 100% of the proceeds wi
 - [ ] Graphic Design Contractor
 
 #### Current Funds
+   |   
 --- | ---:
 Donations | $25
 Payment Processing Fees | -$1.21
