@@ -13,6 +13,11 @@ Please consider supporting this project with a donation. 100% of the proceeds wi
 - [ ] Professional GIS Services
 - [ ] Graphic Design Contractor
 
+#### Current Funds
+| Donations | $25 |
+| Payment Processing Fees | -$1.21 |
+| Current Funds | $23.79 |
+
 # Todo:
 #### For Users
 - [ ] Add ability to customize style/colors
